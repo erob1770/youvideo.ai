@@ -1,6 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<he<!-- Clerk Authentication -->
+<script src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
+<script>
+  const clerk = new Clerk('YOUR_PUBLISHABLE_KEY_HERE');
+  await clerk.load();
+  
+  // Show login if not signed in
+  if (!clerk.user) {
+    document.body.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:sans-serif">
+        <div style="text-align:center">
+          <h1 style="font-size:28px;margin-bottom:16px">YouVideo.ai</h1>
+          <button onclick="clerk.openSignIn()" style="padding:12px 24px;background:#1a6b3c;color:white;border:none;border-radius:8px;font-size:15px;cursor:pointer">
+            Sign in to Continue
+          </button>
+        </div>
+      </div>`;
+    await new Promise(() => {}); // halt
+  }
+  
+  // User is logged in — store user data
+  window.currentUser = clerk.user;
+  console.log('Logged in as:', clerk.user.emailAddresses[0].emailAddress);
+</script>ad>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>YouVideo.ai — Faceless YouTube Channel Builder</title>
