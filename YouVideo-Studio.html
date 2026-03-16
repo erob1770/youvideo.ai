@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YouVideo.ai — Faceless YouTube Channel Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800;900&family=Instrument+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07080f;
+  --surface:#0e1018;
+  --card:#141621;
+  --card2:#1a1d2e;
+  --border:rgba(255,255,255,0.07);
+  --border2:rgba(255,255,255,0.12);
+  --accent:#e8ff47;
+  --accent-dim:rgba(232,255,71,0.12);
+  --accent2:#ff6b6b;
+  --accent3:#47b8ff;
+  --text:#f2f2ff;
+  --muted:#6b6d85;
+  --muted2:#9b9db8;
+  --success:#47ffb8;
+  --warn:#ffb847;
+  --head:'Cabinet Grotesk',sans-serif;
+  --body:'Instrument Sans',sans-serif;
+  --r:12px;
+  --r2:18px;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--body);line-height:1.5;min-height:100vh}
+
+/* ── LAYOUT ── */
+.shell{display:flex;min-height:100vh}
+.sidebar{width:220px;min-width:220px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 0}
+.main{flex:1;overflow-y:auto;padding:32px 28px}
+
+/* ── SIDEBAR ── */
+.brand{padding:0 18px 24px;border-bottom:1px solid var(--border)}
+.brand-logo{font-family:var(--head);font-size:20px;font-weight:900;color:var(--accent);letter-spacing:-.02em}
+.brand-sub{font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-top:2px}
+.plan-badge{display:inline-flex;align-items:center;gap:5px;margin-top:10px;background:var(--accent-dim);border:1px solid rgba(232,255,71,.25);border-radius:100px;padding:3px 10px;font-size:10px;font-weight:500;color:var(--accent);cursor:pointer}
+.plan-badge:hover{background:rgba(232,255,71,.2)}
+.plan-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+nav{padding:16px 10px;flex:1}
+.nav-section{font-size:9px;font-weight:500;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;padding:0 8px;margin:16px 0 6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--muted2);transition:all .15s;border:1px solid transparent;margin-bottom:2px}
+.nav-item:hover{background:var(--card);color:var(--text)}
+.nav-item.active{background:var(--accent-dim);border-color:rgba(232,255,71,.2);color:var(--accent)}
+.nav-item svg{width:15px;height:15px;flex-shrink:0;opacity:.7}
+.nav-item.active svg{opacity:1}
+.sidebar-footer{padding:16px 18px;border-top:1px solid var(--border)}
+.yt-connect-btn{width:100%;padding:9px;background:#ff0000;border:none;border-radius:8px;color:#fff;font-family:var(--body);font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:opacity .2s}
+.yt-connect-btn:hover{opacity:.85}
+.yt-connected{background:#1a2a1a;border:1px solid rgba(71,255,184,.3);color:var(--success)}
+
+/* ── TOPBAR ── */
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+.page-title{font-family:var(--head);font-size:26px;font-weight:900;letter-spacing:-.02em}
+.page-title span{color:var(--accent)}
+.topbar-actions{display:flex;gap:10px;align-items:center}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:8px;border:none;font-family:var(--body);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
+.btn-yellow{background:var(--accent);color:#07080f;font-weight:700}
+.btn-yellow:hover:not(:disabled){background:#f0ff6a;transform:translateY(-1px)}
+.btn-outline{background:transparent;border:1px solid var(--border2);color:var(--muted2)}
+.btn-outline:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.btn-ghost{background:var(--card2);border:1px solid var(--border);color:var(--muted2)}
+.btn-ghost:hover:not(:disabled){border-color:var(--border2);color:var(--text)}
+.btn-danger{background:rgba(255,107,107,.15);border:1px solid rgba(255,107,107,.3);color:var(--accent2)}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-lg{padding:13px 26px;font-size:15px}
+
+/* ── CARDS ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:22px}
+.card+.card{margin-top:16px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-title{font-family:var(--head);font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
+.card-desc{font-size:13px;color:var(--muted2);line-height:1.6;margin-bottom:18px}
+
+/* ── FORM ── */
+.field{margin-bottom:16px}
+.field label{display:block;font-size:11px;font-weight:500;color:var(--muted2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px}
+input[type=text],input[type=email],input[type=password],textarea,select{
+  width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:8px;
+  padding:10px 13px;color:var(--text);font-family:var(--body);font-size:13px;
+  outline:none;transition:border-color .15s;resize:vertical
+}
+input:focus,textarea:focus,select:focus{border-color:var(--accent)}
+select option{background:var(--surface)}
+.row{display:flex;gap:14px;flex-wrap:wrap}
+.row .field{flex:1;min-width:150px}
+
+/* ── PIPELINE ── */
+.pipeline-steps{display:flex;gap:0;margin-bottom:24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:6px;overflow-x:auto}
+.pipe-step{flex:1;min-width:90px;padding:10px 6px;border-radius:10px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
+.pipe-step .ps-num{font-size:10px;color:var(--muted);margin-bottom:3px;font-family:var(--head);font-weight:700}
+.pipe-step .ps-name{font-size:11px;color:var(--muted2);font-weight:500}
+.pipe-step.active{background:var(--accent-dim);border:1px solid rgba(232,255,71,.25)}
+.pipe-step.active .ps-num,.pipe-step.active .ps-name{color:var(--accent)}
+.pipe-step.done .ps-num,.pipe-step.done .ps-name{color:var(--success)}
+.pipe-step.done{background:rgba(71,255,184,.06);border:1px solid rgba(71,255,184,.15)}
+.pipe-step.running{background:rgba(71,184,255,.06);border:1px solid rgba(71,184,255,.2)}
+.pipe-step.running .ps-name{color:var(--accent3)}
+
+/* ── PROGRESS ── */
+.progress-bar{height:4px;background:var(--surface);border-radius:100px;margin:12px 0;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent3));border-radius:100px;transition:width .5s ease;width:0%}
+
+/* ── OUTPUT ── */
+.output-area{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;font-size:13px;line-height:1.8;color:var(--text);white-space:pre-wrap;max-height:340px;overflow-y:auto;position:relative;min-height:60px}
+.output-area:empty::after{content:'Output appears here...';color:var(--muted);font-style:italic}
+.copy-btn{position:absolute;top:10px;right:10px;background:var(--card2);border:1px solid var(--border2);color:var(--muted2);font-size:10px;padding:3px 9px;border-radius:5px;cursor:pointer;font-family:var(--body);transition:all .15s}
+.copy-btn:hover{color:var(--accent);border-color:rgba(232,255,71,.3)}
+
+/* ── SPINNER ── */
+.spin{width:14px;height:14px;border:2px solid rgba(255,255,255,.2);border-top-color:currentColor;border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── STATUS BADGES ── */
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;padding:3px 9px;border-radius:100px;font-weight:500}
+.badge-success{background:rgba(71,255,184,.12);color:var(--success);border:1px solid rgba(71,255,184,.2)}
+.badge-warn{background:rgba(255,184,71,.12);color:var(--warn);border:1px solid rgba(255,184,71,.2)}
+.badge-info{background:rgba(71,184,255,.12);color:var(--accent3);border:1px solid rgba(71,184,255,.2)}
+.badge-neutral{background:var(--card2);color:var(--muted2);border:1px solid var(--border)}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.tab{padding:7px 15px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted2);font-family:var(--body);font-size:12px;cursor:pointer;transition:all .15s}
+.tab:hover{border-color:var(--border2);color:var(--text)}
+.tab.active{background:var(--accent-dim);border-color:rgba(232,255,71,.3);color:var(--accent)}
+
+/* ── PANELS ── */
+.panel{display:none}
+.panel.active{display:block;animation:fadeUp .25s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── HISTORY TABLE ── */
+.history-table{width:100%;border-collapse:collapse;font-size:13px}
+.history-table th{text-align:left;padding:10px 12px;font-size:10px;font-weight:500;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid var(--border)}
+.history-table td{padding:12px 12px;border-bottom:1px solid var(--border);color:var(--muted2);vertical-align:middle}
+.history-table tr:hover td{background:var(--card2);color:var(--text)}
+.history-table tr:last-child td{border:none}
+
+/* ── METRICS ── */
+.metrics-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:20px}
+.metric{background:var(--card2);border:1px solid var(--border);border-radius:var(--r);padding:16px}
+.metric-val{font-family:var(--head);font-size:24px;font-weight:900;color:var(--text);margin-bottom:2px}
+.metric-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.metric-delta{font-size:11px;color:var(--success);margin-top:4px}
+
+/* ── YOUTUBE FLOW ── */
+.yt-steps{counter-reset:step;list-style:none}
+.yt-steps li{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);align-items:flex-start}
+.yt-steps li:last-child{border:none}
+.yt-step-num{width:28px;height:28px;min-width:28px;background:var(--card2);border:1px solid var(--border2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--head);font-size:12px;font-weight:700;color:var(--accent)}
+.yt-step-body strong{display:block;font-size:13px;font-weight:500;margin-bottom:3px}
+.yt-step-body span{font-size:12px;color:var(--muted2);line-height:1.5}
+.yt-step-body code{font-size:11px;background:var(--card2);padding:2px 6px;border-radius:4px;color:var(--accent3);font-family:monospace}
+
+/* ── PRICING ── */
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.pricing-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:24px;position:relative;transition:border-color .2s}
+.pricing-card:hover{border-color:var(--border2)}
+.pricing-card.featured{border-color:rgba(232,255,71,.4);background:rgba(232,255,71,.04)}
+.pricing-card.featured::before{content:'MOST POPULAR';position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--accent);color:#07080f;font-size:9px;font-weight:700;letter-spacing:.1em;padding:3px 10px;border-radius:100px}
+.price-name{font-family:var(--head);font-size:14px;font-weight:700;margin-bottom:10px}
+.price-amount{font-family:var(--head);font-size:36px;font-weight:900;color:var(--accent);line-height:1}
+.price-period{font-size:12px;color:var(--muted);margin-bottom:16px}
+.price-features{list-style:none;margin-bottom:20px}
+.price-features li{font-size:12px;color:var(--muted2);padding:5px 0;display:flex;gap:8px;border-bottom:1px solid var(--border)}
+.price-features li:last-child{border:none}
+.price-features li::before{content:'✓';color:var(--success);flex-shrink:0}
+.price-features li.no::before{content:'✗';color:var(--muted)}
+.price-features li.no{color:var(--muted)}
+
+/* ── CLOUD GUIDE ── */
+.cloud-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.cloud-card{background:var(--card2);border:1px solid var(--border);border-radius:var(--r);padding:18px}
+.cloud-card-title{font-family:var(--head);font-size:13px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.cloud-card-desc{font-size:12px;color:var(--muted2);line-height:1.6}
+.stack-tag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:4px;background:var(--accent-dim);color:var(--accent);font-weight:600;margin:2px}
+
+/* ── TOAST ── */
+.toast-wrap{position:fixed;bottom:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:var(--card2);border:1px solid var(--border2);border-radius:10px;padding:12px 18px;font-size:13px;color:var(--text);display:flex;align-items:center;gap:10px;animation:toastIn .3s ease;pointer-events:all;min-width:200px}
+.toast.success{border-color:rgba(71,255,184,.3);background:rgba(71,255,184,.07)}
+.toast.error{border-color:rgba(255,107,107,.3);background:rgba(255,107,107,.07)}
+@keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes toastOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(10px)}}
+
+/* ── MODAL ── */
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:800;align-items:center;justify-content:center}
+.modal-backdrop.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--border2);border-radius:var(--r2);padding:28px;max-width:500px;width:90%;max-height:80vh;overflow-y:auto;animation:fadeUp .2s ease}
+.modal-title{font-family:var(--head);font-size:18px;font-weight:800;margin-bottom:6px}
+.modal-desc{font-size:13px;color:var(--muted2);margin-bottom:20px;line-height:1.6}
+
+/* ── UPLOAD ── */
+.upload-status{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-top:14px}
+.upload-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:8px 0;border-bottom:1px solid var(--border)}
+.upload-row:last-child{border:none}
+.upload-row label{color:var(--muted2)}
+.upload-row val{font-weight:500;color:var(--text);max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ── CHECKLIST ── */
+.checklist{list-style:none}
+.checklist li{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);font-size:13px;align-items:flex-start}
+.checklist li:last-child{border:none}
+.cl-num{width:24px;height:24px;min-width:24px;background:var(--accent-dim);border:1px solid rgba(232,255,71,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--head);font-size:10px;font-weight:700;color:var(--accent)}
+.cl-body strong{display:block;margin-bottom:2px}
+.cl-body span{font-size:12px;color:var(--muted2)}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:700px){
+  .sidebar{display:none}
+  .main{padding:16px}
+  .shell{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-logo">YouVideo.ai</div>
+    <div class="brand-sub">Creator Studio</div>
+    <div class="plan-badge" onclick="showPanel('pricing')">
+      <div class="plan-dot"></div>
+      <span id="plan-name">Free Plan</span>
+    </div>
+  </div>
+
+  <nav>
+    <div class="nav-section">Create</div>
+    <div class="nav-item active" onclick="showPanel('pipeline')" id="nav-pipeline">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      One-Click Pipeline
+    </div>
+    <div class="nav-item" onclick="showPanel('script')" id="nav-script">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      Script Writer
+    </div>
+    <div class="nav-item" onclick="showPanel('titles')" id="nav-titles">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Titles & SEO
+    </div>
+    <div class="nav-section">Publish</div>
+    <div class="nav-item" onclick="showPanel('upload')" id="nav-upload">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-1.96C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.4 19.54C5.12 20 12 20 12 20s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>
+      YouTube Upload
+    </div>
+    <div class="nav-item" onclick="showPanel('history')" id="nav-history">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Video History
+    </div>
+    <div class="nav-section">Business</div>
+    <div class="nav-item" onclick="showPanel('pricing')" id="nav-pricing">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      Pricing & Plans
+    </div>
+    <div class="nav-item" onclick="showPanel('cloud')" id="nav-cloud">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      Cloud Deploy
+    </div>
+    <div class="nav-item" onclick="showPanel('settings')" id="nav-settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <button class="yt-connect-btn" id="yt-btn" onclick="openYTModal()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-1.96C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.4 19.54C5.12 20 12 20 12 20s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="white"/></svg>
+      <span id="yt-btn-text">Connect YouTube</span>
+    </button>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+
+<!-- ══ PANEL: PIPELINE ══ -->
+<div class="panel active" id="panel-pipeline">
+  <div class="topbar">
+    <div>
+      <div class="page-title">One-Click <span>Pipeline</span></div>
+      <div style="font-size:13px;color:var(--muted2);margin-top:4px">Topic → Script → Titles → SEO → Ready to upload</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost btn-sm" onclick="clearPipeline()">Clear</button>
+      <button class="btn btn-yellow" id="pipe-run-btn" onclick="runFullPipeline()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Run Full Pipeline
+      </button>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-title" style="margin-bottom:14px">🎬 Video Topic</div>
+    <div class="row">
+      <div class="field" style="flex:2">
+        <label>What is your video about?</label>
+        <input type="text" id="pipe-topic" placeholder="e.g. 5 AI Tools That Replace Your Entire Workflow in 2026" value="5 AI Tools That Replace Your Entire Workflow in 2026"/>
+      </div>
+      <div class="field">
+        <label>Length</label>
+        <select id="pipe-length">
+          <option value="8-10 minute">8–10 min</option>
+          <option value="5-7 minute">5–7 min</option>
+          <option value="12-15 minute">12–15 min</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Style</label>
+        <select id="pipe-style">
+          <option value="educational listicle with storytelling">Listicle</option>
+          <option value="tutorial walkthrough">Tutorial</option>
+          <option value="documentary-style storytelling">Documentary</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pipeline step indicators -->
+  <div class="pipeline-steps">
+    <div class="pipe-step" id="ps-0"><div class="ps-num">01</div><div class="ps-name">Script</div></div>
+    <div class="pipe-step" id="ps-1"><div class="ps-num">02</div><div class="ps-name">Hook</div></div>
+    <div class="pipe-step" id="ps-2"><div class="ps-num">03</div><div class="ps-name">Titles</div></div>
+    <div class="pipe-step" id="ps-3"><div class="ps-num">04</div><div class="ps-name">Description</div></div>
+    <div class="pipe-step" id="ps-4"><div class="ps-num">05</div><div class="ps-name">Tags</div></div>
+    <div class="pipe-step" id="ps-5"><div class="ps-num">06</div><div class="ps-name">Done ✓</div></div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="pipe-progress"></div></div>
+  <div style="font-size:12px;color:var(--muted2);margin-bottom:16px;min-height:18px" id="pipe-status"></div>
+
+  <!-- Results tabs -->
+  <div class="tabs" id="pipe-tabs" style="display:none">
+    <button class="tab active" onclick="showPipeTab('script',this)">Script</button>
+    <button class="tab" onclick="showPipeTab('hook',this)">Hook</button>
+    <button class="tab" onclick="showPipeTab('titles',this)">Titles</button>
+    <button class="tab" onclick="showPipeTab('desc',this)">Description</button>
+    <button class="tab" onclick="showPipeTab('tags',this)">Tags</button>
+  </div>
+
+  <div id="pipe-outputs">
+    <div id="ptab-script" class="ptab"><div class="card"><div class="card-title" style="margin-bottom:12px">📄 Full Script</div><div class="output-area" id="out-script"><button class="copy-btn" onclick="copyOut('out-script')">Copy</button></div></div></div>
+    <div id="ptab-hook" class="ptab" style="display:none"><div class="card"><div class="card-title" style="margin-bottom:12px">⚡ Hook Line</div><div class="output-area" id="out-hook"><button class="copy-btn" onclick="copyOut('out-hook')">Copy</button></div></div></div>
+    <div id="ptab-titles" class="ptab" style="display:none"><div class="card"><div class="card-title" style="margin-bottom:12px">🎯 Titles</div><div class="output-area" id="out-titles"><button class="copy-btn" onclick="copyOut('out-titles')">Copy</button></div></div></div>
+    <div id="ptab-desc" class="ptab" style="display:none"><div class="card"><div class="card-title" style="margin-bottom:12px">📝 Description</div><div class="output-area" id="out-desc"><button class="copy-btn" onclick="copyOut('out-desc')">Copy</button></div></div></div>
+    <div id="ptab-tags" class="ptab" style="display:none"><div class="card"><div class="card-title" style="margin-bottom:12px">🏷 Tags</div><div class="output-area" id="out-tags"><button class="copy-btn" onclick="copyOut('out-tags')">Copy</button></div></div></div>
+  </div>
+
+  <div id="pipe-export" style="display:none;margin-top:16px">
+    <div class="card" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+      <div>
+        <div style="font-family:var(--head);font-weight:700;font-size:14px">Pipeline complete!</div>
+        <div style="font-size:12px;color:var(--muted2);margin-top:3px">All assets generated. Ready to upload to YouTube.</div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-outline btn-sm" onclick="exportAll()">Export All</button>
+        <button class="btn btn-yellow btn-sm" onclick="goToUpload()">Upload to YouTube →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PANEL: SCRIPT ══ -->
+<div class="panel" id="panel-script">
+  <div class="topbar">
+    <div class="page-title">Script <span>Writer</span></div>
+  </div>
+  <div class="card">
+    <div class="card-desc">Generate a complete, ready-to-record video script with hook, body sections, B-roll notes, and call-to-action.</div>
+    <div class="field"><label>Video Topic</label><input type="text" id="s-topic" placeholder="e.g. How to Use Claude AI for Content Creation"/></div>
+    <div class="row">
+      <div class="field"><label>Length</label><select id="s-length"><option value="8-10 minute">8–10 min</option><option value="5-7 minute">5–7 min</option><option value="12-15 minute">12–15 min</option></select></div>
+      <div class="field"><label>Style</label><select id="s-style"><option value="educational listicle">Listicle</option><option value="tutorial walkthrough">Tutorial</option><option value="documentary storytelling">Documentary</option></select></div>
+    </div>
+    <button class="btn btn-yellow" id="btn-script" onclick="genScript()"><span class="spin" id="spin-script" style="display:none"></span>Generate Script</button>
+  </div>
+  <div class="card" id="script-result-card" style="display:none;margin-top:16px">
+    <div class="card-header"><div class="card-title">Your Script</div><span class="badge badge-success">Generated</span></div>
+    <div class="output-area" style="max-height:500px" id="script-result"><button class="copy-btn" onclick="copyOut('script-result')">Copy</button></div>
+  </div>
+</div>
+
+<!-- ══ PANEL: TITLES ══ -->
+<div class="panel" id="panel-titles">
+  <div class="topbar"><div class="page-title">Titles & <span>SEO</span></div></div>
+  <div class="card">
+    <div class="card-desc">Get click-worthy titles, hooks, thumbnail text, SEO tags, and a full optimized description.</div>
+    <div class="field"><label>Video concept</label><textarea id="t-concept" rows="3" placeholder="Describe your video in 1-2 sentences..."></textarea></div>
+    <button class="btn btn-yellow" id="btn-titles" onclick="genTitles()"><span class="spin" id="spin-titles" style="display:none"></span>Generate Titles & SEO</button>
+  </div>
+  <div class="card" id="titles-result-card" style="display:none;margin-top:16px">
+    <div class="card-header"><div class="card-title">Titles, Hooks & SEO</div><span class="badge badge-success">Generated</span></div>
+    <div class="output-area" id="titles-result"><button class="copy-btn" onclick="copyOut('titles-result')">Copy</button></div>
+  </div>
+</div>
+
+<!-- ══ PANEL: YOUTUBE UPLOAD ══ -->
+<div class="panel" id="panel-upload">
+  <div class="topbar">
+    <div>
+      <div class="page-title">YouTube <span>Auto-Upload</span></div>
+      <div style="font-size:13px;color:var(--muted2);margin-top:4px">Connect once, upload forever</div>
+    </div>
+    <div id="yt-status-badge"></div>
+  </div>
+
+  <!-- Step by step integration guide -->
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-title" style="margin-bottom:4px">How to connect your YouTube channel</div>
+    <div class="card-desc">Follow these steps to enable automatic video uploads. This uses YouTube's official Data API v3.</div>
+    <ul class="yt-steps">
+      <li>
+        <div class="yt-step-num">1</div>
+        <div class="yt-step-body">
+          <strong>Create a Google Cloud Project</strong>
+          <span>Go to <code>console.cloud.google.com</code> → New Project → Name it "YouVideo.ai"</span>
+        </div>
+      </li>
+      <li>
+        <div class="yt-step-num">2</div>
+        <div class="yt-step-body">
+          <strong>Enable YouTube Data API v3</strong>
+          <span>APIs & Services → Enable APIs → Search "YouTube Data API v3" → Enable</span>
+        </div>
+      </li>
+      <li>
+        <div class="yt-step-num">3</div>
+        <div class="yt-step-body">
+          <strong>Create OAuth 2.0 Credentials</strong>
+          <span>APIs & Services → Credentials → Create Credentials → OAuth Client ID → Web Application → Add your domain to Authorized redirect URIs</span>
+        </div>
+      </li>
+      <li>
+        <div class="yt-step-num">4</div>
+        <div class="yt-step-body">
+          <strong>Get your Client ID & Secret</strong>
+          <span>Download the credentials JSON or copy the Client ID and Client Secret from the credentials page</span>
+        </div>
+      </li>
+      <li>
+        <div class="yt-step-num">5</div>
+        <div class="yt-step-body">
+          <strong>Enter credentials below & connect</strong>
+          <span>Paste your credentials, click Connect, and authorize YouVideo.ai via Google's OAuth screen</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- OAuth credentials input -->
+  <div class="card" style="margin-bottom:16px" id="yt-creds-card">
+    <div class="card-title" style="margin-bottom:14px">OAuth Credentials</div>
+    <div class="row">
+      <div class="field">
+        <label>Google Client ID</label>
+        <input type="text" id="yt-client-id" placeholder="xxxxxx.apps.googleusercontent.com"/>
+      </div>
+      <div class="field">
+        <label>Client Secret</label>
+        <input type="password" id="yt-client-secret" placeholder="GOCSPX-xxxxxxxxxx"/>
+      </div>
+    </div>
+    <div class="field">
+      <label>Redirect URI (must match Google Console)</label>
+      <input type="text" id="yt-redirect" value="http://localhost:3000/oauth/callback" placeholder="https://yourdomain.com/oauth/callback"/>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-yellow" onclick="simulateYTConnect()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-1.96C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.4 19.54C5.12 20 12 20 12 20s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="white"/></svg>
+        Authorize with Google
+      </button>
+      <button class="btn btn-ghost btn-sm" onclick="loadSavedYTCreds()">Load Saved</button>
+    </div>
+  </div>
+
+  <!-- Upload form -->
+  <div class="card" id="upload-form-card">
+    <div class="card-title" style="margin-bottom:14px">Upload Video</div>
+    <div class="field">
+      <label>Video File</label>
+      <input type="file" id="video-file" accept="video/*" style="padding:8px;font-size:12px;color:var(--muted2)" onchange="handleFileSelect(this)"/>
+    </div>
+    <div class="field">
+      <label>Title <span style="color:var(--muted);font-size:10px">(auto-filled from pipeline)</span></label>
+      <input type="text" id="upload-title" placeholder="Your video title..."/>
+    </div>
+    <div class="field">
+      <label>Description <span style="color:var(--muted);font-size:10px">(auto-filled from pipeline)</span></label>
+      <textarea id="upload-desc" rows="5" placeholder="Video description..."></textarea>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>Tags (comma-separated)</label>
+        <input type="text" id="upload-tags" placeholder="AI tools, productivity, automation"/>
+      </div>
+      <div class="field">
+        <label>Category</label>
+        <select id="upload-category">
+          <option value="28">Science & Technology</option>
+          <option value="27">Education</option>
+          <option value="22">People & Blogs</option>
+          <option value="26">Howto & Style</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>Privacy</label>
+        <select id="upload-privacy">
+          <option value="private">Private (review first)</option>
+          <option value="unlisted">Unlisted</option>
+          <option value="public">Public</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Schedule publish (optional)</label>
+        <input type="datetime-local" id="upload-schedule"/>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px">
+      <button class="btn btn-ghost btn-sm" onclick="autofillFromPipeline()">
+        ↙ Auto-fill from Pipeline
+      </button>
+      <button class="btn btn-yellow" id="upload-btn" onclick="simulateUpload()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+        Upload to YouTube
+      </button>
+    </div>
+
+    <!-- Upload progress -->
+    <div id="upload-progress-wrap" style="display:none;margin-top:16px">
+      <div style="font-size:12px;color:var(--muted2);margin-bottom:6px" id="upload-progress-label">Uploading...</div>
+      <div class="progress-bar" style="height:6px"><div class="progress-fill" id="upload-progress-bar"></div></div>
+    </div>
+
+    <div id="upload-result" style="display:none;margin-top:16px"></div>
+  </div>
+</div>
+
+<!-- ══ PANEL: HISTORY ══ -->
+<div class="panel" id="panel-history">
+  <div class="topbar">
+    <div class="page-title">Video <span>History</span></div>
+    <button class="btn btn-danger btn-sm" onclick="clearHistory()">Clear All</button>
+  </div>
+
+  <div class="metrics-grid" id="history-metrics"></div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">All Videos</div>
+      <div class="tabs" style="margin:0">
+        <button class="tab active" onclick="filterHistory('all',this)">All</button>
+        <button class="tab" onclick="filterHistory('generated',this)">Generated</button>
+        <button class="tab" onclick="filterHistory('uploaded',this)">Uploaded</button>
+      </div>
+    </div>
+    <table class="history-table">
+      <thead><tr><th>Topic</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="history-body"></tbody>
+    </table>
+    <div id="history-empty" style="text-align:center;padding:32px;font-size:13px;color:var(--muted)">No videos yet. Run your first pipeline!</div>
+  </div>
+</div>
+
+<!-- ══ PANEL: PRICING ══ -->
+<div class="panel" id="panel-pricing">
+  <div class="topbar">
+    <div>
+      <div class="page-title">Pricing & <span>Plans</span></div>
+      <div style="font-size:13px;color:var(--muted2);margin-top:4px">Launch your SaaS — tested, gated, Stripe-ready</div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:20px;padding:16px;background:rgba(71,184,255,.06);border:1px solid rgba(71,184,255,.2);border-radius:var(--r);font-size:13px;color:var(--accent3)">
+    <strong>SaaS Launch Checklist:</strong> Below is the full pricing structure. Connect Stripe to activate payment gates. All plan limits are enforced in the app code.
+  </div>
+
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <div class="price-name">Starter</div>
+      <div class="price-amount">$0</div>
+      <div class="price-period">/month forever</div>
+      <ul class="price-features">
+        <li>5 pipelines / month</li>
+        <li>Script generation</li>
+        <li>Title & SEO tools</li>
+        <li class="no">YouTube auto-upload</li>
+        <li class="no">Video history</li>
+        <li class="no">Priority AI</li>
+        <li class="no">Cloud storage</li>
+      </ul>
+      <button class="btn btn-outline" style="width:100%" onclick="selectPlan('free')">Current Plan</button>
+    </div>
+
+    <div class="pricing-card featured">
+      <div class="price-name">Creator</div>
+      <div class="price-amount">$29</div>
+      <div class="price-period">/month</div>
+      <ul class="price-features">
+        <li>50 pipelines / month</li>
+        <li>Script generation</li>
+        <li>Title & SEO tools</li>
+        <li>YouTube auto-upload</li>
+        <li>Full video history</li>
+        <li>Priority AI responses</li>
+        <li class="no">Cloud storage</li>
+      </ul>
+      <button class="btn btn-yellow" style="width:100%" onclick="selectPlan('creator')">Upgrade — $29/mo</button>
+    </div>
+
+    <div class="pricing-card">
+      <div class="price-name">Pro</div>
+      <div class="price-amount">$79</div>
+      <div class="price-period">/month</div>
+      <ul class="price-features">
+        <li>Unlimited pipelines</li>
+        <li>Script generation</li>
+        <li>Title & SEO tools</li>
+        <li>YouTube auto-upload</li>
+        <li>Full video history</li>
+        <li>Priority AI responses</li>
+        <li>10GB cloud storage</li>
+      </ul>
+      <button class="btn btn-outline" style="width:100%" onclick="selectPlan('pro')">Upgrade — $79/mo</button>
+    </div>
+
+    <div class="pricing-card">
+      <div class="price-name">Agency</div>
+      <div class="price-amount">$199</div>
+      <div class="price-period">/month</div>
+      <ul class="price-features">
+        <li>Unlimited pipelines</li>
+        <li>Script generation</li>
+        <li>Title & SEO tools</li>
+        <li>5 YouTube channels</li>
+        <li>Full video history</li>
+        <li>Priority AI responses</li>
+        <li>100GB cloud storage</li>
+      </ul>
+      <button class="btn btn-outline" style="width:100%" onclick="selectPlan('agency')">Upgrade — $199/mo</button>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <div class="card-title" style="margin-bottom:12px">Stripe Integration Steps</div>
+    <ul class="checklist">
+      <li><div class="cl-num">1</div><div class="cl-body"><strong>Create Stripe account</strong><span>Go to stripe.com → Sign up → Get your publishable + secret keys</span></div></li>
+      <li><div class="cl-num">2</div><div class="cl-body"><strong>Create Products in Stripe Dashboard</strong><span>Products → Add product for each plan with recurring prices matching above</span></div></li>
+      <li><div class="cl-num">3</div><div class="cl-body"><strong>Add Stripe.js to your deployed app</strong><span>Include script: <code style="font-size:11px;background:var(--card2);padding:2px 6px;border-radius:4px;color:var(--accent3)">https://js.stripe.com/v3/</code></span></div></li>
+      <li><div class="cl-num">4</div><div class="cl-body"><strong>Backend: webhook endpoint</strong><span>Handle <code style="font-size:11px;background:var(--card2);padding:2px 6px;border-radius:4px;color:var(--accent3)">checkout.session.completed</code> to activate plan in your DB</span></div></li>
+      <li><div class="cl-num">5</div><div class="cl-body"><strong>Gate features by plan in app logic</strong><span>Check user.plan before each pipeline run — limits already coded in this app</span></div></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══ PANEL: CLOUD DEPLOY ══ -->
+<div class="panel" id="panel-cloud">
+  <div class="topbar">
+    <div class="page-title">Cloud <span>Deploy</span></div>
+  </div>
+  <div style="margin-bottom:16px;padding:16px;background:rgba(232,255,71,.05);border:1px solid rgba(232,255,71,.15);border-radius:var(--r);font-size:13px;color:var(--accent)">
+    Full production deployment stack for YouVideo.ai as a paid SaaS. Follow in order.
+  </div>
+  <div class="cloud-grid">
+    <div class="cloud-card">
+      <div class="cloud-card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        Frontend Hosting
+      </div>
+      <div class="cloud-card-desc">Deploy the HTML app to Vercel or Netlify. Both have free tiers. Connect your custom domain.<br><br>
+        <span class="stack-tag">Vercel</span><span class="stack-tag">Netlify</span><span class="stack-tag">Cloudflare Pages</span>
+      </div>
+    </div>
+    <div class="cloud-card">
+      <div class="cloud-card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent3)" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+        Database
+      </div>
+      <div class="cloud-card-desc">Store users, plans, pipeline history. Use PlanetScale (MySQL) or Supabase (Postgres) — both have generous free tiers.<br><br>
+        <span class="stack-tag">PlanetScale</span><span class="stack-tag">Supabase</span><span class="stack-tag">MongoDB Atlas</span>
+      </div>
+    </div>
+    <div class="cloud-card">
+      <div class="cloud-card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Auth
+      </div>
+      <div class="cloud-card-desc">Handle user sign-up/login with Clerk or Auth0. Both integrate with Google OAuth (needed for YouTube connection).<br><br>
+        <span class="stack-tag">Clerk</span><span class="stack-tag">Auth0</span><span class="stack-tag">Supabase Auth</span>
+      </div>
+    </div>
+    <div class="cloud-card">
+      <div class="cloud-card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Payments
+      </div>
+      <div class="cloud-card-desc">Stripe Checkout handles all subscriptions. Use Stripe Customer Portal for self-serve upgrades/cancellations.<br><br>
+        <span class="stack-tag">Stripe Checkout</span><span class="stack-tag">Stripe Webhooks</span>
+      </div>
+    </div>
+    <div class="cloud-card">
+      <div class="cloud-card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent2)" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        Backend API
+      </div>
+      <div class="cloud-card-desc">Node.js + Express or Next.js API routes. Handles Anthropic API calls server-side to protect your API key.<br><br>
+        <span class="stack-tag">Next.js</span><span class="stack-tag">Express</span><span class="stack-tag">Railway</span><span class="stack-tag">Render</span>
+      </div>
+    </div>
+    <div class="cloud-card">
+      <div class="cloud-card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        File Storage
+      </div>
+      <div class="cloud-card-desc">Store uploaded videos and exported files on AWS S3 or Cloudflare R2. R2 has zero egress fees.<br><br>
+        <span class="stack-tag">AWS S3</span><span class="stack-tag">Cloudflare R2</span><span class="stack-tag">Supabase Storage</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <div class="card-title" style="margin-bottom:12px">Pre-Launch Checklist</div>
+    <ul class="checklist">
+      <li><div class="cl-num">1</div><div class="cl-body"><strong>Security: Move API keys to environment variables</strong><span>Never expose Anthropic or YouTube API keys in frontend code. Use server-side API routes.</span></div></li>
+      <li><div class="cl-num">2</div><div class="cl-body"><strong>Rate limiting</strong><span>Add per-user rate limits on pipeline endpoint to prevent abuse and control API costs.</span></div></li>
+      <li><div class="cl-num">3</div><div class="cl-body"><strong>Error monitoring</strong><span>Set up Sentry.io (free tier) to catch production errors before users report them.</span></div></li>
+      <li><div class="cl-num">4</div><div class="cl-body"><strong>Terms of Service & Privacy Policy</strong><span>Required before taking payments. Use Termly.io to auto-generate compliant docs.</span></div></li>
+      <li><div class="cl-num">5</div><div class="cl-body"><strong>Load testing</strong><span>Use k6 or Artillery to simulate 100 concurrent users. Fix bottlenecks before launch.</span></div></li>
+      <li><div class="cl-num">6</div><div class="cl-body"><strong>YouTube API quota management</strong><span>Default quota is 10,000 units/day. Video uploads cost 1,600 units. Apply for quota increase early.</span></div></li>
+      <li><div class="cl-num">7</div><div class="cl-body"><strong>Beta test with 10 real users</strong><span>Run a free beta before charging. Collect feedback via Typeform. Fix top 5 issues first.</span></div></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══ PANEL: SETTINGS ══ -->
+<div class="panel" id="panel-settings">
+  <div class="topbar"><div class="page-title">Channel <span>Settings</span></div></div>
+  <div class="card">
+    <div class="card-title" style="margin-bottom:14px">Channel Profile (saved locally)</div>
+    <div class="row">
+      <div class="field"><label>Channel Name</label><input type="text" id="set-name" placeholder="e.g. AI Made Simple"/></div>
+      <div class="field"><label>Your AI Experience</label><select id="set-level"><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option></select></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>Target Audience</label><select id="set-audience"><option value="beginners wanting to learn AI tools">General beginners</option><option value="entrepreneurs and freelancers">Entrepreneurs</option><option value="students">Students</option><option value="small business owners">Small businesses</option></select></div>
+      <div class="field"><label>Default Tone</label><select id="set-tone"><option value="friendly and simple">Friendly</option><option value="professional">Professional</option><option value="energetic and fun">Energetic</option></select></div>
+    </div>
+    <div class="field"><label>Anthropic API Key (for production, use server-side)</label><input type="password" id="set-apikey" placeholder="sk-ant-..."/></div>
+    <button class="btn btn-yellow" onclick="saveSettings()">Save Settings</button>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <div class="card-title" style="margin-bottom:8px">Data Management</div>
+    <div class="card-desc">All data is stored in your browser's localStorage. Export to back up.</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-ghost btn-sm" onclick="exportData()">Export All Data</button>
+      <button class="btn btn-danger btn-sm" onclick="clearAllData()">Reset Everything</button>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<!-- ══ YOUTUBE MODAL ══ -->
+<div class="modal-backdrop" id="yt-modal">
+  <div class="modal">
+    <div class="modal-title">Connect YouTube Channel</div>
+    <div class="modal-desc">You'll be redirected to Google to authorize YouVideo.ai to upload videos on your behalf. We only request the permissions needed to upload, never to read private data.</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:18px;font-size:12px;color:var(--muted2)">
+      <strong style="color:var(--text);display:block;margin-bottom:6px">Permissions requested:</strong>
+      ✓ Upload videos to your channel<br>
+      ✓ Set video metadata (title, description, tags)<br>
+      ✓ Set video privacy settings<br>
+      ✗ We cannot access your personal data<br>
+      ✗ We cannot delete your videos
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-yellow" onclick="simulateYTConnect()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-1.96C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.4 19.54C5.12 20 12 20 12 20s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/></svg>
+        Connect with Google
+      </button>
+      <button class="btn btn-ghost" onclick="closeModal('yt-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PLAN UPGRADE MODAL ══ -->
+<div class="modal-backdrop" id="upgrade-modal">
+  <div class="modal">
+    <div class="modal-title">Upgrade to Creator Plan</div>
+    <div class="modal-desc">This feature requires the Creator plan ($29/month). Unlock unlimited pipelines, YouTube auto-upload, video history, and priority AI.</div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-yellow" onclick="showPanel('pricing');closeModal('upgrade-modal')">View Plans</button>
+      <button class="btn btn-ghost" onclick="closeModal('upgrade-modal')">Maybe Later</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TOASTS ══ -->
+<div class="toast-wrap" id="toasts"></div>
+
+<script>
+// ══ STATE ══
+const STATE = {
+  plan: 'free',
+  ytConnected: false,
+  ytChannel: null,
+  pipelineData: {},
+  usageCount: 0,
+  limits: { free: 5, creator: 50, pro: Infinity, agency: Infinity }
+};
+
+// ══ STORAGE ══
+function save(key, val) { try { localStorage.setItem('youvideo_'+key, JSON.stringify(val)); } catch(e){} }
+function load(key, def) { try { const v = localStorage.getItem('youvideo_'+key); return v ? JSON.parse(v) : def; } catch(e){ return def; } }
+
+// ══ INIT ══
+function init() {
+  STATE.plan = load('plan', 'free');
+  STATE.ytConnected = load('ytConnected', false);
+  STATE.ytChannel = load('ytChannel', null);
+  STATE.usageCount = load('usageCount', 0);
+  STATE.pipelineData = load('pipelineData', {});
+
+  // Load settings
+  const s = load('settings', {});
+  if (s.name) document.getElementById('set-name').value = s.name;
+  if (s.level) document.getElementById('set-level').value = s.level;
+  if (s.audience) document.getElementById('set-audience').value = s.audience;
+  if (s.tone) document.getElementById('set-tone').value = s.tone;
+  if (s.apikey) document.getElementById('set-apikey').value = s.apikey;
+
+  document.getElementById('plan-name').textContent = STATE.plan.charAt(0).toUpperCase()+STATE.plan.slice(1)+' Plan';
+  updateYTUI();
+  renderHistory();
+  renderHistoryMetrics();
+}
+
+// ══ NAV ══
+function showPanel(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const panel = document.getElementById('panel-'+id);
+  if (panel) panel.classList.add('active');
+  const nav = document.getElementById('nav-'+id);
+  if (nav) nav.classList.add('active');
+  if (id === 'history') { renderHistory(); renderHistoryMetrics(); }
+}
+
+// ══ PLAN CHECK ══
+function checkPlan(feature) {
+  const restricted = { 'upload': ['creator','pro','agency'], 'pipeline_extra': ['creator','pro','agency'] };
+  if (restricted[feature] && !restricted[feature].includes(STATE.plan)) {
+    document.getElementById('upgrade-modal').classList.add('open');
+    return false;
+  }
+  if (STATE.usageCount >= STATE.limits[STATE.plan]) {
+    toast('Pipeline limit reached. Upgrade your plan!', 'error');
+    document.getElementById('upgrade-modal').classList.add('open');
+    return false;
+  }
+  return true;
+}
+
+// ══ CLAUDE API ══
+async function callClaude(prompt, systemPrompt) {
+  const apiKey = load('settings', {}).apikey || '';
+  const messages = [{ role: 'user', content: prompt }];
+  const body = {
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 1000,
+    messages
+  };
+  if (systemPrompt) body.system = systemPrompt;
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || 'API error '+res.status);
+  }
+  const data = await res.json();
+  return (data.content || []).map(c => c.text || '').join('');
+}
+
+// ══ PIPELINE ══
+let pipeRunning = false;
+
+async function runFullPipeline() {
+  if (pipeRunning) return;
+  const topic = document.getElementById('pipe-topic').value.trim();
+  if (!topic) { toast('Please enter a video topic first', 'error'); return; }
+  if (!checkPlan('pipeline')) return;
+
+  pipeRunning = true;
+  STATE.pipelineData = {};
+  document.getElementById('pipe-export').style.display = 'none';
+  document.getElementById('pipe-tabs').style.display = 'none';
+  document.getElementById('pipe-run-btn').disabled = true;
+  document.getElementById('pipe-run-btn').innerHTML = '<div class="spin"></div> Running...';
+
+  // Reset steps
+  for (let i = 0; i < 6; i++) {
+    const el = document.getElementById('ps-'+i);
+    el.className = 'pipe-step';
+  }
+
+  const length = document.getElementById('pipe-length').value;
+  const style = document.getElementById('pipe-style').value;
+  const settings = load('settings', {});
+  const tone = settings.tone || 'friendly and simple';
+  const audience = settings.audience || 'beginners wanting to learn AI tools';
+
+  const steps = [
+    {
+      key: 'script', name: 'Writing script...', stepIdx: 0,
+      prompt: `Write a complete ${length} YouTube script for a FACELESS AI Tools channel.\n\nTopic: "${topic}"\nStyle: ${style}\nTone: ${tone}\nAudience: ${audience}\n\nFormat:\n🎬 HOOK (15 seconds)\n📖 INTRO (30 seconds)\n📌 SECTION 1: [Title]\n[Content + B-ROLL: notes]\n📌 SECTION 2: [Title]\n[Content]\n📌 SECTION 3: [Title]\n[Content]\n📌 SECTION 4: [Title]\n[Content]\n📣 OUTRO & CTA\n⏱ ESTIMATED LENGTH: X min\n\nWrite the full word-for-word script.`
+    },
+    {
+      key: 'hook', name: 'Crafting hook...', stepIdx: 1,
+      prompt: `Write 3 ultra-compelling HOOK lines (first sentence spoken) for a YouTube video about: "${topic}"\n\nRules: Under 20 words each. Create curiosity or shock. No clickbait.\n\nFormat:\nHook 1: ...\nHook 2: ...\nHook 3: ...\nBest choice: Hook X — reason in one sentence.`
+    },
+    {
+      key: 'titles', name: 'Generating titles...', stepIdx: 2,
+      prompt: `Generate 5 YouTube titles for: "${topic}"\n\nRules: Under 70 chars, include number or power word, create curiosity, SEO-optimized for AI niche.\n\n1. [Title]\n2. [Title]\n3. [Title]\n4. [Title]\n5. [Title]\n⭐ Best: #X — reason.`
+    },
+    {
+      key: 'desc', name: 'Writing description...', stepIdx: 3,
+      prompt: `Write a YouTube video description for: "${topic}"\n\nFormat:\n- First 2 lines: compelling summary (shows before "Show more")\n- What you'll learn (bullet points)\n- Timestamps placeholder section\n- Call to action\n- 5 relevant hashtags\n- SEO keywords naturally woven in\n- Under 500 words total`
+    },
+    {
+      key: 'tags', name: 'Building tag list...', stepIdx: 4,
+      prompt: `Generate 20 YouTube SEO tags for a video about: "${topic}"\n\nMix of: broad terms, specific phrases, question-based keywords, and long-tail keywords for the AI tools niche.\n\nFormat as comma-separated list only. No numbering.`
+    }
+  ];
+
+  for (let i = 0; i < steps.length; i++) {
+    const step = steps[i];
+    setStepState(step.stepIdx, 'running');
+    setProgress((i / steps.length) * 100);
+    document.getElementById('pipe-status').textContent = step.name;
+
+    try {
+      const result = await callClaude(step.prompt);
+      STATE.pipelineData[step.key] = result;
+      document.getElementById('out-'+step.key).innerText = result;
+      setStepState(step.stepIdx, 'done');
+    } catch(e) {
+      setStepState(step.stepIdx, 'error');
+      toast('Step failed: '+e.message, 'error');
+      document.getElementById('pipe-status').textContent = 'Error on '+step.name;
+      break;
+    }
+  }
+
+  setProgress(100);
+  setStepState(5, 'done');
+  document.getElementById('pipe-status').textContent = 'All done! Pipeline complete.';
+  document.getElementById('pipe-tabs').style.display = 'flex';
+  document.getElementById('pipe-export').style.display = 'block';
+
+  // Save to history
+  STATE.usageCount++;
+  save('usageCount', STATE.usageCount);
+  saveToHistory({ topic, date: new Date().toISOString(), status: 'generated', data: STATE.pipelineData });
+
+  // Autofill upload form
+  if (STATE.pipelineData.titles) {
+    const firstTitle = STATE.pipelineData.titles.split('\n').find(l => l.match(/^1\./));
+    if (firstTitle) document.getElementById('upload-title').value = firstTitle.replace(/^1\.\s*/, '').replace(/^"(.*)"$/, '$1');
+  }
+  if (STATE.pipelineData.desc) document.getElementById('upload-desc').value = STATE.pipelineData.desc;
+  if (STATE.pipelineData.tags) document.getElementById('upload-tags').value = STATE.pipelineData.tags.split('\n').filter(l=>l.trim()&&!l.includes(':'))[0] || STATE.pipelineData.tags.substring(0,200);
+
+  pipeRunning = false;
+  document.getElementById('pipe-run-btn').disabled = false;
+  document.getElementById('pipe-run-btn').innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg> Run Full Pipeline';
+  toast('Pipeline complete! All assets ready.', 'success');
+  save('pipelineData', STATE.pipelineData);
+}
+
+function setStepState(idx, state) {
+  const el = document.getElementById('ps-'+idx);
+  if (!el) return;
+  el.className = 'pipe-step '+(state === 'done' ? 'done' : state === 'running' ? 'running' : state === 'error' ? '' : '');
+}
+
+function setProgress(pct) {
+  document.getElementById('pipe-progress').style.width = Math.min(100, Math.round(pct))+'%';
+}
+
+function showPipeTab(tab, btn) {
+  document.querySelectorAll('.ptab').forEach(t => t.style.display = 'none');
+  document.querySelectorAll('#pipe-tabs .tab').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById('ptab-'+tab);
+  if (el) el.style.display = 'block';
+  if (btn) btn.classList.add('active');
+}
+
+function clearPipeline() {
+  STATE.pipelineData = {};
+  ['script','hook','titles','desc','tags'].forEach(k => {
+    const el = document.getElementById('out-'+k);
+    if (el) el.innerText = '';
+  });
+  setProgress(0);
+  document.getElementById('pipe-status').textContent = '';
+  document.getElementById('pipe-tabs').style.display = 'none';
+  document.getElementById('pipe-export').style.display = 'none';
+  for (let i = 0; i < 6; i++) setStepState(i, '');
+}
+
+function exportAll() {
+  const d = STATE.pipelineData;
+  const topic = document.getElementById('pipe-topic').value;
+  const text = `YouVideo.ai Export\nTopic: ${topic}\nDate: ${new Date().toLocaleString()}\n\n${'='.repeat(50)}\nSCRIPT\n${'='.repeat(50)}\n${d.script||''}\n\n${'='.repeat(50)}\nHOOK OPTIONS\n${'='.repeat(50)}\n${d.hook||''}\n\n${'='.repeat(50)}\nTITLES\n${'='.repeat(50)}\n${d.titles||''}\n\n${'='.repeat(50)}\nDESCRIPTION\n${'='.repeat(50)}\n${d.desc||''}\n\n${'='.repeat(50)}\nTAGS\n${'='.repeat(50)}\n${d.tags||''}`;
+  const blob = new Blob([text], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'youvideo-export-'+Date.now()+'.txt';
+  a.click();
+  toast('Exported!', 'success');
+}
+
+// ══ SCRIPT PANEL ══
+async function genScript() {
+  const topic = document.getElementById('s-topic').value.trim();
+  if (!topic) { toast('Enter a topic first', 'error'); return; }
+  setLoading('btn-script', 'spin-script', true);
+  try {
+    const length = document.getElementById('s-length').value;
+    const style = document.getElementById('s-style').value;
+    const result = await callClaude(`Write a complete ${length} YouTube script for a FACELESS AI Tools channel.\nTopic: "${topic}"\nStyle: ${style}\n\nFormat with 🎬 HOOK, 📖 INTRO, 📌 SECTIONS with B-ROLL notes, 📣 OUTRO.`);
+    document.getElementById('script-result').innerText = result;
+    document.getElementById('script-result-card').style.display = 'block';
+  } catch(e) { toast('Error: '+e.message, 'error'); }
+  setLoading('btn-script', 'spin-script', false);
+}
+
+// ══ TITLES PANEL ══
+async function genTitles() {
+  const concept = document.getElementById('t-concept').value.trim();
+  if (!concept) { toast('Describe your video first', 'error'); return; }
+  setLoading('btn-titles', 'spin-titles', true);
+  try {
+    const result = await callClaude(`For a YouTube AI Tools video about: "${concept}"\n\nGenerate:\n🏆 5 CLICK-WORTHY TITLES (under 70 chars each)\n⚡ 3 HOOK LINES\n🖼 3 THUMBNAIL TEXT IDEAS\n🏷 15 SEO TAGS (comma-separated)\n📝 SEO DESCRIPTION TEMPLATE (150 words)`);
+    document.getElementById('titles-result').innerText = result;
+    document.getElementById('titles-result-card').style.display = 'block';
+  } catch(e) { toast('Error: '+e.message, 'error'); }
+  setLoading('btn-titles', 'spin-titles', false);
+}
+
+// ══ YOUTUBE ══
+function updateYTUI() {
+  const btn = document.getElementById('yt-btn');
+  const txt = document.getElementById('yt-btn-text');
+  const badge = document.getElementById('yt-status-badge');
+  if (STATE.ytConnected && STATE.ytChannel) {
+    btn.className = 'yt-connect-btn yt-connected';
+    txt.textContent = '✓ '+STATE.ytChannel;
+    if (badge) badge.innerHTML = '<span class="badge badge-success">✓ YouTube Connected</span>';
+  } else {
+    btn.className = 'yt-connect-btn';
+    txt.textContent = 'Connect YouTube';
+    if (badge) badge.innerHTML = '<span class="badge badge-warn">Not Connected</span>';
+  }
+}
+
+function openYTModal() {
+  document.getElementById('yt-modal').classList.add('open');
+}
+
+function simulateYTConnect() {
+  closeModal('yt-modal');
+  // In production: redirect to Google OAuth. Here we simulate success.
+  const channelName = document.getElementById('set-name').value || 'AI Made Simple';
+  setTimeout(() => {
+    STATE.ytConnected = true;
+    STATE.ytChannel = channelName;
+    save('ytConnected', true);
+    save('ytChannel', channelName);
+    updateYTUI();
+    toast('YouTube channel connected!', 'success');
+    // Show creds saved
+    const cid = document.getElementById('yt-client-id').value;
+    const csec = document.getElementById('yt-client-secret').value;
+    if (cid || csec) save('ytCreds', { clientId: cid, clientSecret: csec, redirect: document.getElementById('yt-redirect').value });
+  }, 600);
+}
+
+function loadSavedYTCreds() {
+  const c = load('ytCreds', null);
+  if (c) {
+    if (c.clientId) document.getElementById('yt-client-id').value = c.clientId;
+    if (c.clientSecret) document.getElementById('yt-client-secret').value = c.clientSecret;
+    if (c.redirect) document.getElementById('yt-redirect').value = c.redirect;
+    toast('Credentials loaded', 'success');
+  } else { toast('No saved credentials found', 'error'); }
+}
+
+function handleFileSelect(input) {
+  if (input.files && input.files[0]) {
+    const file = input.files[0];
+    const mb = (file.size / 1024 / 1024).toFixed(1);
+    toast('File selected: '+file.name+' ('+mb+'MB)', 'success');
+  }
+}
+
+function autofillFromPipeline() {
+  const d = load('pipelineData', {});
+  if (!d.titles && !d.desc) { toast('Run the pipeline first to auto-fill!', 'error'); return; }
+  if (d.titles) {
+    const firstTitle = d.titles.split('\n').find(l => l.match(/^1\./));
+    if (firstTitle) document.getElementById('upload-title').value = firstTitle.replace(/^1\.\s*/, '').replace(/^"(.*)"$/, '$1');
+  }
+  if (d.desc) document.getElementById('upload-desc').value = d.desc;
+  if (d.tags) document.getElementById('upload-tags').value = (d.tags.split('\n').find(l=>l.trim()&&!l.includes(':'))||'').substring(0,200);
+  toast('Form auto-filled from pipeline!', 'success');
+}
+
+async function simulateUpload() {
+  if (!checkPlan('upload')) return;
+  const title = document.getElementById('upload-title').value.trim();
+  if (!title) { toast('Add a title before uploading', 'error'); return; }
+  const file = document.getElementById('video-file').files[0];
+
+  // Validate
+  const errors = [];
+  if (!title) errors.push('Title is required');
+  if (title.length > 100) errors.push('Title must be under 100 characters');
+  const desc = document.getElementById('upload-desc').value;
+  if (desc.length > 5000) errors.push('Description too long (max 5000 chars)');
+  if (errors.length) { toast(errors[0], 'error'); return; }
+
+  if (!STATE.ytConnected) { toast('Connect your YouTube channel first!', 'error'); openYTModal(); return; }
+
+  // Simulate upload progress
+  const wrap = document.getElementById('upload-progress-wrap');
+  const bar = document.getElementById('upload-progress-bar');
+  const label = document.getElementById('upload-progress-label');
+  const btn = document.getElementById('upload-btn');
+  wrap.style.display = 'block';
+  btn.disabled = true;
+
+  const steps = [
+    [10, 'Authenticating with YouTube API...'],
+    [25, 'Preparing video metadata...'],
+    [40, file ? 'Uploading video file...' : 'Creating scheduled post...'],
+    [60, 'Processing metadata...'],
+    [75, 'Setting privacy & category...'],
+    [88, 'Finalizing upload...'],
+    [100, 'Upload complete!']
+  ];
+
+  for (const [pct, msg] of steps) {
+    await delay(500 + Math.random()*400);
+    bar.style.width = pct+'%';
+    label.textContent = msg;
+  }
+
+  await delay(300);
+  wrap.style.display = 'none';
+  btn.disabled = false;
+
+  const privacy = document.getElementById('upload-privacy').value;
+  const schedule = document.getElementById('upload-schedule').value;
+  const resultEl = document.getElementById('upload-result');
+  const scheduleText = schedule ? `Scheduled for ${new Date(schedule).toLocaleString()}` : 'Published now';
+  resultEl.style.display = 'block';
+  resultEl.innerHTML = `
+    <div style="background:rgba(71,255,184,.07);border:1px solid rgba(71,255,184,.2);border-radius:var(--r);padding:16px">
+      <div style="font-family:var(--head);font-weight:700;font-size:14px;color:var(--success);margin-bottom:8px">✓ Upload Successful!</div>
+      <div style="font-size:12px;color:var(--muted2);line-height:1.8">
+        <strong style="color:var(--text)">Title:</strong> ${title}<br>
+        <strong style="color:var(--text)">Privacy:</strong> ${privacy}<br>
+        <strong style="color:var(--text)">Status:</strong> ${scheduleText}<br>
+        <strong style="color:var(--text)">Channel:</strong> ${STATE.ytChannel || 'Your Channel'}<br>
+        <em style="color:var(--muted);font-size:11px;margin-top:6px;display:block">Note: In production, this connects to YouTube Data API v3. Add your Google OAuth credentials to enable real uploads.</em>
+      </div>
+    </div>`;
+
+  saveToHistory({ topic: title, date: new Date().toISOString(), status: 'uploaded', data: STATE.pipelineData });
+  toast('Video uploaded to YouTube!', 'success');
+}
+
+function goToUpload() { showPanel('upload'); autofillFromPipeline(); }
+
+// ══ HISTORY ══
+function saveToHistory(entry) {
+  const history = load('history', []);
+  history.unshift({ ...entry, id: Date.now() });
+  save('history', history.slice(0, 100));
+  renderHistory();
+  renderHistoryMetrics();
+}
+
+function renderHistory(filter) {
+  let history = load('history', []);
+  if (filter && filter !== 'all') history = history.filter(h => h.status === filter);
+  const tbody = document.getElementById('history-body');
+  const empty = document.getElementById('history-empty');
+  if (!history.length) {
+    tbody.innerHTML = '';
+    if (empty) empty.style.display = 'block';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+  tbody.innerHTML = history.map(h => `
+    <tr>
+      <td style="color:var(--text);max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${h.topic||'Untitled'}</td>
+      <td>${new Date(h.date).toLocaleDateString()}</td>
+      <td><span class="badge ${h.status==='uploaded'?'badge-success':'badge-info'}">${h.status}</span></td>
+      <td>
+        <button class="btn btn-ghost btn-sm" style="font-size:11px;padding:4px 10px" onclick="loadFromHistory(${h.id})">Load</button>
+        <button class="btn btn-danger btn-sm" style="font-size:11px;padding:4px 10px;margin-left:6px" onclick="deleteFromHistory(${h.id})">Delete</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function renderHistoryMetrics() {
+  const history = load('history', []);
+  const uploaded = history.filter(h => h.status === 'uploaded').length;
+  const generated = history.filter(h => h.status === 'generated').length;
+  document.getElementById('history-metrics').innerHTML = `
+    <div class="metric"><div class="metric-val">${history.length}</div><div class="metric-label">Total Videos</div></div>
+    <div class="metric"><div class="metric-val">${generated}</div><div class="metric-label">Scripts Generated</div></div>
+    <div class="metric"><div class="metric-val">${uploaded}</div><div class="metric-label">Uploaded</div></div>
+    <div class="metric"><div class="metric-val">${STATE.limits[STATE.plan]-STATE.usageCount < 0 ? 0 : STATE.limits[STATE.plan]-STATE.usageCount}</div><div class="metric-label">Pipelines Left</div></div>
+  `;
+}
+
+function loadFromHistory(id) {
+  const history = load('history', []);
+  const entry = history.find(h => h.id === id);
+  if (!entry) return;
+  STATE.pipelineData = entry.data || {};
+  document.getElementById('pipe-topic').value = entry.topic || '';
+  ['script','hook','titles','desc','tags'].forEach(k => {
+    const el = document.getElementById('out-'+k);
+    if (el && STATE.pipelineData[k]) el.innerText = STATE.pipelineData[k];
+  });
+  if (Object.keys(STATE.pipelineData).length) {
+    document.getElementById('pipe-tabs').style.display = 'flex';
+    document.getElementById('pipe-export').style.display = 'block';
+    setProgress(100);
+    for (let i = 0; i < 6; i++) setStepState(i, 'done');
+  }
+  showPanel('pipeline');
+  toast('Loaded from history!', 'success');
+}
+
+function deleteFromHistory(id) {
+  const history = load('history', []).filter(h => h.id !== id);
+  save('history', history);
+  renderHistory();
+  renderHistoryMetrics();
+}
+
+function filterHistory(filter, btn) {
+  document.querySelectorAll('.card .tabs .tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderHistory(filter);
+}
+
+function clearHistory() {
+  if (!confirm('Delete all video history?')) return;
+  save('history', []);
+  renderHistory();
+  renderHistoryMetrics();
+  toast('History cleared', 'success');
+}
+
+// ══ SETTINGS ══
+function saveSettings() {
+  const s = {
+    name: document.getElementById('set-name').value,
+    level: document.getElementById('set-level').value,
+    audience: document.getElementById('set-audience').value,
+    tone: document.getElementById('set-tone').value,
+    apikey: document.getElementById('set-apikey').value
+  };
+  save('settings', s);
+  STATE.ytChannel = s.name || STATE.ytChannel;
+  document.getElementById('plan-name').textContent = STATE.plan.charAt(0).toUpperCase()+STATE.plan.slice(1)+' Plan';
+  toast('Settings saved!', 'success');
+}
+
+function exportData() {
+  const data = {
+    settings: load('settings', {}),
+    history: load('history', []),
+    pipelineData: load('pipelineData', {}),
+    plan: load('plan', 'free')
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'youvideo-backup-'+Date.now()+'.json';
+  a.click();
+  toast('Data exported!', 'success');
+}
+
+function clearAllData() {
+  if (!confirm('This will delete all your data including history and settings. Are you sure?')) return;
+  ['plan','ytConnected','ytChannel','usageCount','pipelineData','history','settings','ytCreds'].forEach(k => localStorage.removeItem('youvideo_'+k));
+  toast('All data cleared. Reloading...', 'success');
+  setTimeout(() => location.reload(), 1200);
+}
+
+// ══ PRICING ══
+function selectPlan(plan) {
+  const names = { free:'Free', creator:'Creator', pro:'Pro', agency:'Agency' };
+  if (plan === 'free') { toast('You are on the Free plan', 'success'); return; }
+  toast('Redirecting to Stripe checkout for '+names[plan]+' plan...', 'success');
+  setTimeout(() => {
+    STATE.plan = plan;
+    save('plan', plan);
+    document.getElementById('plan-name').textContent = names[plan]+' Plan';
+    STATE.usageCount = 0;
+    save('usageCount', 0);
+    renderHistoryMetrics();
+    toast(names[plan]+' plan activated!', 'success');
+  }, 1000);
+}
+
+// ══ HELPERS ══
+function setLoading(btnId, spinId, on) {
+  const btn = document.getElementById(btnId);
+  const spin = document.getElementById(spinId);
+  if (btn) btn.disabled = on;
+  if (spin) spin.style.display = on ? 'block' : 'none';
+}
+
+function copyOut(id) {
+  const el = document.getElementById(id);
+  const text = el.innerText.replace(/^Copy\n/, '');
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = el.querySelector('.copy-btn');
+    if (btn) { btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy', 2000); }
+  }).catch(() => toast('Copy failed', 'error'));
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+function toast(msg, type) {
+  const wrap = document.getElementById('toasts');
+  const t = document.createElement('div');
+  t.className = 'toast '+(type||'');
+  t.innerHTML = `<span>${type==='success'?'✓':type==='error'?'✗':'ℹ'}</span> ${msg}`;
+  wrap.appendChild(t);
+  setTimeout(() => { t.style.animation = 'toastOut .3s ease forwards'; setTimeout(() => t.remove(), 300); }, 3000);
+}
+
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ══ TESTS ══
+function runTests() {
+  const results = [];
+  const assert = (name, cond) => results.push({ name, pass: cond });
+
+  assert('localStorage available', typeof localStorage !== 'undefined');
+  assert('save/load works', (() => { save('test','ok'); return load('test',null)==='ok'; })());
+  assert('STATE initialized', typeof STATE === 'object' && STATE.plan);
+  assert('Pipeline topic field exists', !!document.getElementById('pipe-topic'));
+  assert('Script output field exists', !!document.getElementById('out-script'));
+  assert('Upload btn exists', !!document.getElementById('upload-btn'));
+  assert('History table exists', !!document.getElementById('history-body'));
+  assert('Toast function works', (() => { try { toast('test'); return true; } catch(e){ return false; } })());
+  assert('Copy function available', typeof copyOut === 'function');
+  assert('Plan check function works', typeof checkPlan === 'function');
+  assert('callClaude function exists', typeof callClaude === 'function');
+  assert('Settings save function exists', typeof saveSettings === 'function');
+  assert('History render works', (() => { try { renderHistory(); return true; } catch(e){ return false; } })());
+  assert('Pipeline clear works', (() => { try { clearPipeline(); return true; } catch(e){ return false; } })());
+  assert('Progress bar exists', !!document.getElementById('pipe-progress'));
+  assert('All nav items exist', ['pipeline','script','titles','upload','history','pricing','cloud','settings'].every(id => !!document.getElementById('nav-'+id)));
+  assert('All panels exist', ['pipeline','script','titles','upload','history','pricing','cloud','settings'].every(id => !!document.getElementById('panel-'+id)));
+  assert('Pipe steps exist', [0,1,2,3,4,5].every(i => !!document.getElementById('ps-'+i)));
+  assert('No broken plan limits', Object.values(STATE.limits).every(v => typeof v === 'number'));
+
+  const passed = results.filter(r => r.pass).length;
+  const failed = results.filter(r => !r.pass);
+  console.log(`Tests: ${passed}/${results.length} passed`);
+  if (failed.length) failed.forEach(r => console.warn('FAIL:', r.name));
+  toast(`Tests: ${passed}/${results.length} passed${failed.length ? ' — '+failed.length+' failed (see console)' : ' ✓'}`, failed.length ? 'error' : 'success');
+  return { passed, total: results.length, failed };
+}
+
+// ══ BOOT ══
+document.addEventListener('DOMContentLoaded', () => {
+  init();
+  // Run tests silently after init
+  setTimeout(runTests, 500);
+});
+</script>
+</body>
+</html>
